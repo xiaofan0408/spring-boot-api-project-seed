@@ -8,6 +8,7 @@ import org.mybatis.generator.internal.DefaultShellCallback;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -18,7 +19,7 @@ import static com.company.project.common.core.ProjectConstant.*;
  */
 public class CodeGenerator {
     //JDBC配置，请修改为你项目的实际配置
-    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/test";
+    private static final String JDBC_URL = "jdbc:mysql://118.25.217.97:3306/Profile";
     private static final String JDBC_USERNAME = "root";
     private static final String JDBC_PASSWORD = "123456";
     private static final String JDBC_DIVER_CLASS_NAME = "com.mysql.jdbc.Driver";
@@ -37,7 +38,7 @@ public class CodeGenerator {
     private static final String DATE = new SimpleDateFormat("yyyy/MM/dd").format(new Date());//@date
 
     public static void main(String[] args) {
-        genCode("输入表名");
+        genCode("user");
         //genCodeByCustomModelName("输入表名","输入自定义Model名称");
     }
 
@@ -66,6 +67,7 @@ public class CodeGenerator {
 
 
     public static void genModelAndMapper(String tableName, String modelName) {
+        String packName = tableName.replaceAll("_","");
         Context context = new Context(ModelType.FLAT);
         context.setId("Potato");
         context.setTargetRuntime("MyBatis3Simple");
@@ -84,9 +86,13 @@ public class CodeGenerator {
         pluginConfiguration.addProperty("mappers", MAPPER_INTERFACE_REFERENCE);
         context.addPluginConfiguration(pluginConfiguration);
 
+        PluginConfiguration dtopluginConfiguration = new PluginConfiguration();
+        dtopluginConfiguration.setConfigurationType("com.conpany.project.DTOGeneratorPlugin");
+        context.addPluginConfiguration(dtopluginConfiguration);
+
         JavaModelGeneratorConfiguration javaModelGeneratorConfiguration = new JavaModelGeneratorConfiguration();
         javaModelGeneratorConfiguration.setTargetProject(PROJECT_PATH + JAVA_PATH);
-        javaModelGeneratorConfiguration.setTargetPackage(MODEL_PACKAGE);
+        javaModelGeneratorConfiguration.setTargetPackage(MessageFormat.format(MODEL_PACKAGE, packName));
         context.setJavaModelGeneratorConfiguration(javaModelGeneratorConfiguration);
 
         SqlMapGeneratorConfiguration sqlMapGeneratorConfiguration = new SqlMapGeneratorConfiguration();
@@ -96,7 +102,7 @@ public class CodeGenerator {
 
         JavaClientGeneratorConfiguration javaClientGeneratorConfiguration = new JavaClientGeneratorConfiguration();
         javaClientGeneratorConfiguration.setTargetProject(PROJECT_PATH + JAVA_PATH);
-        javaClientGeneratorConfiguration.setTargetPackage(MAPPER_PACKAGE);
+        javaClientGeneratorConfiguration.setTargetPackage(MessageFormat.format(MAPPER_PACKAGE, packName));
         javaClientGeneratorConfiguration.setConfigurationType("XMLMAPPER");
         context.setJavaClientGeneratorConfiguration(javaClientGeneratorConfiguration);
 
@@ -134,7 +140,7 @@ public class CodeGenerator {
     public static void genService(String tableName, String modelName) {
         try {
             freemarker.template.Configuration cfg = getConfiguration();
-
+            String packName = tableName.replaceAll("_","");
             Map<String, Object> data = new HashMap<>();
             data.put("date", DATE);
             data.put("author", AUTHOR);
@@ -143,7 +149,7 @@ public class CodeGenerator {
             data.put("modelNameLowerCamel", tableNameConvertLowerCamel(tableName));
             data.put("basePackage", BASE_PACKAGE);
 
-            File file = new File(PROJECT_PATH + JAVA_PATH + PACKAGE_PATH_SERVICE + modelNameUpperCamel + "Service.java");
+            File file = new File(PROJECT_PATH + JAVA_PATH + MessageFormat.format(PACKAGE_PATH_SERVICE, packName) + modelNameUpperCamel + "Service.java");
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
@@ -151,7 +157,7 @@ public class CodeGenerator {
                     new FileWriter(file));
             System.out.println(modelNameUpperCamel + "Service.java 生成成功");
 
-            File file1 = new File(PROJECT_PATH + JAVA_PATH + PACKAGE_PATH_SERVICE_IMPL + modelNameUpperCamel + "ServiceImpl.java");
+            File file1 = new File(PROJECT_PATH + JAVA_PATH + MessageFormat.format(PACKAGE_PATH_SERVICE_IMPL, packName) + modelNameUpperCamel + "ServiceImpl.java");
             if (!file1.getParentFile().exists()) {
                 file1.getParentFile().mkdirs();
             }
@@ -166,7 +172,7 @@ public class CodeGenerator {
     public static void genController(String tableName, String modelName) {
         try {
             freemarker.template.Configuration cfg = getConfiguration();
-
+            String packName = tableName.replaceAll("_","");
             Map<String, Object> data = new HashMap<>();
             data.put("date", DATE);
             data.put("author", AUTHOR);
@@ -176,7 +182,7 @@ public class CodeGenerator {
             data.put("modelNameLowerCamel", CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, modelNameUpperCamel));
             data.put("basePackage", BASE_PACKAGE);
 
-            File file = new File(PROJECT_PATH + JAVA_PATH + PACKAGE_PATH_CONTROLLER + modelNameUpperCamel + "Controller.java");
+            File file = new File(PROJECT_PATH + JAVA_PATH + MessageFormat.format(PACKAGE_PATH_CONTROLLER, packName) + modelNameUpperCamel + "Controller.java");
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }

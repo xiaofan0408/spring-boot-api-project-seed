@@ -13,17 +13,17 @@ public final class ProjectConstant {
     /**
      * 生成的Model所在包
      * */
-    public static final String MODEL_PACKAGE = BASE_PACKAGE + ".model";
+    public static final String MODEL_PACKAGE = BASE_PACKAGE +".{0}.model.entity";
 
     /**
      * 生成的Mapper所在包
      * */
-    public static final String MAPPER_PACKAGE = BASE_PACKAGE + ".dao";
+    public static final String MAPPER_PACKAGE = BASE_PACKAGE + ".{0}.dao";
 
     /**
      * 生成的Service所在包
      * */
-    public static final String SERVICE_PACKAGE = BASE_PACKAGE + ".service";
+    public static final String SERVICE_PACKAGE = BASE_PACKAGE + ".{0}.service";
 
     /**
      * 生成的ServiceImpl所在包
@@ -33,7 +33,7 @@ public final class ProjectConstant {
     /**
      * 生成的Controller所在包
      */
-    public static final String CONTROLLER_PACKAGE = BASE_PACKAGE + ".web";
+    public static final String CONTROLLER_PACKAGE = BASE_PACKAGE + ".{0}.web";
 
     /**
      * Mapper插件基础接口的完全限定名
