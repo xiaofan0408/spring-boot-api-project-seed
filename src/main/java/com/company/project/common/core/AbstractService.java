@@ -39,8 +39,9 @@ public abstract class AbstractService<T> implements Service<T> {
     }
 
     @Override
-    public void deleteById(Integer id) {
-        mapper.deleteByPrimaryKey(id);
+    public void deleteById(String id) {
+        Long  idValue = Long.valueOf(id);
+        mapper.deleteByPrimaryKey(idValue);
     }
 
     @Override
@@ -54,8 +55,9 @@ public abstract class AbstractService<T> implements Service<T> {
     }
 
     @Override
-    public T findById(Integer id) {
-        return mapper.selectByPrimaryKey(id);
+    public T findById(String id) {
+        Long  idValue = Long.valueOf(id);
+        return mapper.selectByPrimaryKey(idValue);
     }
 
     @Override
@@ -86,6 +88,7 @@ public abstract class AbstractService<T> implements Service<T> {
         return mapper.selectAll();
     }
 
+    @Override
     public Long generateKey() {
         return SnowflakeFactory.getSnowflakeIdWorker().nextId();
     }

@@ -20,6 +20,8 @@ public final class ProjectConstant {
      * */
     public static final String MAPPER_PACKAGE = BASE_PACKAGE + ".{0}.dao";
 
+    public static final String ALL_MAPPER_PACKAGE = BASE_PACKAGE + ".*.dao";
+
     /**
      * 生成的Service所在包
      * */

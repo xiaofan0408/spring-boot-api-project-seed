@@ -1,8 +1,8 @@
-package ${basePackage}.web;
+package ${basePackage}.${packName}.web;
 import ${basePackage}.common.core.Result;
 import ${basePackage}.common.core.ResultGenerator;
-import ${basePackage}.model.${modelNameUpperCamel};
-import ${basePackage}.service.${modelNameUpperCamel}Service;
+import ${basePackage}.${packName}.model.entity.${modelNameUpperCamel};
+import ${basePackage}.${packName}.service.${modelNameUpperCamel}Service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +34,7 @@ public class ${modelNameUpperCamel}Controller {
 
     @ApiOperation(value = "删除" ,  notes="删除")
     @PostMapping("/delete")
-    public Result delete(@RequestParam Integer id) {
+    public Result delete(@RequestParam String id) {
         ${modelNameLowerCamel}Service.deleteById(id);
         return ResultGenerator.genSuccessResult();
     }
@@ -48,7 +48,7 @@ public class ${modelNameUpperCamel}Controller {
 
     @ApiOperation(value = "获取" ,  notes="获取")
     @GetMapping("/detail")
-    public Result detail(@RequestParam Integer id) {
+    public Result detail(@RequestParam String id) {
         ${modelNameUpperCamel} ${modelNameLowerCamel} = ${modelNameLowerCamel}Service.findById(id);
         return ResultGenerator.genSuccessResult(${modelNameLowerCamel});
     }
