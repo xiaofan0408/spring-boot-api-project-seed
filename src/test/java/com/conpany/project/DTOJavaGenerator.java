@@ -36,6 +36,7 @@ public class DTOJavaGenerator extends AbstractJavaGenerator {
         String pack = context.getProperty("dtoTargetPackage");
         List<CompilationUnit> answer = new ArrayList<CompilationUnit>();
         answer.add(genDto(pack));
+        answer.add(genVo(pack));
         return answer;
     }
 
@@ -50,6 +51,66 @@ public class DTOJavaGenerator extends AbstractJavaGenerator {
         String entity = recordType.substring(recordType.lastIndexOf(".") + 1) + "DTO";
 
         pkg = pkg.substring(0, pkg.lastIndexOf(".") + 1) + "dto";
+
+        String dtoType = pkg + "." + entity;
+
+        FullyQualifiedJavaType type = new FullyQualifiedJavaType(dtoType);
+
+        TopLevelClass topLevelClass = new TopLevelClass(type);
+
+
+        topLevelClass.addImportedType(new FullyQualifiedJavaType("java.io.Serializable"));
+        topLevelClass.addSuperInterface(new FullyQualifiedJavaType("Serializable"));
+        topLevelClass.addField(createField());
+
+        topLevelClass.addImportedType("io.swagger.annotations.ApiModelProperty");
+//        topLevelClass.addImportedType("lombok.Getter");
+//        topLevelClass.addImportedType("lombok.Setter");
+
+
+        topLevelClass.setVisibility(JavaVisibility.PUBLIC);
+        commentGenerator.addJavaFileComment(topLevelClass);
+        FullyQualifiedJavaType superClass = getSuperClass();
+        if (superClass != null);
+
+        commentGenerator.addModelClassComment(topLevelClass, this.introspectedTable);
+
+        List<IntrospectedColumn> introspectedColumns = getColumnsInThisClass();
+
+        if (this.introspectedTable.isConstructorBased()) {
+            addParameterizedConstructor(topLevelClass);
+
+            if (!this.introspectedTable.isImmutable()) {
+                addDefaultConstructor(topLevelClass);
+            }
+        }
+        String rootClass = getRootClass();
+        for (IntrospectedColumn introspectedColumn : introspectedColumns) {
+            if (RootClassInfo.getInstance(rootClass, this.warnings)
+                    .containsProperty(introspectedColumn)) {
+                continue;
+            }
+            Field field = getJavaBeansField(introspectedColumn, this.context, this.introspectedTable);
+            field.addAnnotation(String.format("@ApiModelProperty(value = \"%s\", required = true)", new Object[] { getSimpleType(introspectedColumn.getFullyQualifiedJavaType()), introspectedColumn.getRemarks() }));
+            if (plugins.modelFieldGenerated(field, topLevelClass, introspectedColumn, this.introspectedTable, Plugin.ModelClassType.BASE_RECORD)) {
+                topLevelClass.addField(field);
+                topLevelClass.addImportedType(field.getType());
+            }
+        }
+
+        return topLevelClass;
+    }
+
+    private TopLevelClass genVo(String pack) {
+        Plugin plugins = this.context.getPlugins();
+        CommentGenerator commentGenerator = this.context.getCommentGenerator();
+
+        String recordType = this.introspectedTable.getBaseRecordType();
+
+        String pkg = recordType.substring(0, recordType.lastIndexOf("."));
+        String entity = recordType.substring(recordType.lastIndexOf(".") + 1) + "VO";
+
+        pkg = pkg.substring(0, pkg.lastIndexOf(".") + 1) + "vo";
 
         String dtoType = pkg + "." + entity;
 
