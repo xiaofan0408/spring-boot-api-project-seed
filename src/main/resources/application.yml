@@ -7,5 +7,26 @@ spring:
 # 所有环境通用的配置，放在这里
   resources:
     add-mappings: false
+  datasource:
+    druid:
+       test-on-return: false
+       test-on-borrow: false
+       test-while-idle: true
+       validation-query: SELECT 1
+       min-evictable-idle-time-millis: 60000
+       max-wait: 60000
+       initial-size: 1
+       min-idle: 1
+       max-active: 20
+       pool-prepared-statements: true
+       connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+       maxPoolPreparedStatementPerConnectionSize: 20
+       filters: stat,wall,log4j
+       time-between-eviction-runs-millis: 60000
 server:
   port: 8976
+  tomcat:
+          min-spare-threads: 300
+          max-threads: 1300
+          max-connections: 1000
+          accept-count: 300
